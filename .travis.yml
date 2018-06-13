@@ -5,7 +5,7 @@ services:
 
 ## Test if the container can build
 before_install:
-  - docker build seankross/bologna .
+  - docker build -t seankross/bologna .
 
 ## A small test
 script:
