@@ -10,6 +10,7 @@ before_install:
 
 ## A small test
 script:
-  - Rscript ari_test.R
+  - docker cp ari_test.R seankross/bologna:/ari_test.R
+  - docker run seankross/bologna Rscript ari_test.R
   - Rscript -e 'testthat::expect_true(file.size("output.mp4") > 50000);'
   - rm -f output.mp4
