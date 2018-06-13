@@ -7,7 +7,7 @@ services:
 ## Test if the container can build
 before_install:
   - docker pull seankross/bologna
-  - docker run --name bologna -d seankross/bologna /bin/bash
+  - docker run --name bologna -it seankross/bologna /bin/bash
 
 ## A small test
 script:
