@@ -14,5 +14,5 @@ script:
   - docker exec bologna Rscript ari_test.R
   - rm -f output.mp4
   - docker cp bologna:output.mp4 output.mp4
-  - Rscript -e 'testthat::expect_true(file.size("output.mp4") > 50000);'
+  - docker exec bologna Rscript -e 'testthat::expect_true(file.size("output.mp4") > 50000);'
 
