@@ -7,11 +7,11 @@ services:
 ## Test if the container can build
 before_install:
   - docker pull seankross/bologna
-
+  - docker run --name bologna -dit seankross/bologna
 ## A small test
 script:
   - docker cp ari_test.R bologna:ari_test.R
-  - docker run --name bologna seankross/bologna Rscript ari_test.R
+  - docker exec bologna Rscript ari_test.R
   - rm -f output.mp4
   - docker cp bologna:output.mp4 output.mp4
   - Rscript -e 'testthat::expect_true(file.size("output.mp4") > 50000);'
