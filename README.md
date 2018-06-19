@@ -27,9 +27,9 @@ Throughout I will call the IP address `YOURIP`.
 3.  Run `docker pull seankross/bologna`
 4.  To start the RStudio server `docker run --name=rstudiocon -e
     USER=<username> -e PASSWORD=<password> -dp 8787:8787
-    seankross/bologna`. I may not do `-e ROOT=TRUE`. Then log into
-    `YOURIP:8787` using the username and password.For making multiple
-    users, see
+    seankross/bologna`. You may also do `-e ROOT=TRUE`, but you still
+    should have USER/PASSWORD. Then log into `YOURIP:8787` using the
+    username and password. For making multiple users, see
     <https://github.com/rocker-org/rocker/wiki/Using-the-RStudio-image#multiple-users>.  
 5.  To access this running container in the Terminal, run `docker exec
     -it "<containerID>" bash` (find the `ID` from `docker ps`). Then run
@@ -38,12 +38,11 @@ Throughout I will call the IP address `YOURIP`.
 <!-- end list -->
 
   - To run the container in the Terminal without mapping to the RStudio
-    instance, run `docker run -it -e ROOT=TRUE seankross/bologna
-bash`.
+    instance, run `docker run -it -e ROOT=TRUE seankross/bologna bash`.
+    Now you are in the Docker image and you can run
+`R`.
 
 <!-- NB: `rstudio` user may be open to the whole internet if you don't use `USER` and `PASSWORD`. You can run `docker exec rstudiocon deluser rstudio` -->
-
-Now you are in the Docker image and you can run `R`.
 
 ### Setting up some defaults
 
