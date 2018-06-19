@@ -24,12 +24,24 @@ Throughout I will call the IP address `YOURIP`.
 1.  Make sure you use Under Choose an image, select the One-click apps
     tab to create a Docker image. Don’t forget to add your SSH keys.
 2.  Run `ssh root@YOURIP` in a Terminal to log into the machine.
-3.  Start on `docker pull` test below.
-4.  Run `docker pull seankross/bologna`
-5.  To start the RStudio server `docker run -dp 8787:8787 -e ROOT=TRUE
-    seankross/bologna`. Go to `YOURIP:8787`.
-6.  To run on the Terminal, run `docker run -it -e ROOT=TRUE
-    seankross/bologna bash`
+3.  Run `docker pull seankross/bologna`
+4.  To start the RStudio server `docker run --name=rstudiocon -e
+    USER=<username> -e PASSWORD=<password> -dp 8787:8787
+    seankross/bologna`. I may not do `-e ROOT=TRUE`. Then log into
+    `YOURIP:8787` using the username and password.For making multiple
+    users, see
+    <https://github.com/rocker-org/rocker/wiki/Using-the-RStudio-image#multiple-users>.  
+5.  To access this running container in the Terminal, run `docker exec
+    -it "<containerID>" bash` (find the `ID` from `docker ps`). Then run
+    `su <username>` to then log into that account.
+
+<!-- end list -->
+
+  - To run the container in the Terminal without mapping to the RStudio
+    instance, run `docker run -it -e ROOT=TRUE seankross/bologna
+bash`.
+
+<!-- NB: `rstudio` user may be open to the whole internet if you don't use `USER` and `PASSWORD`. You can run `docker exec rstudiocon deluser rstudio` -->
 
 Now you are in the Docker image and you can run `R`.
 
@@ -72,6 +84,7 @@ See
 1.  See the volumes made `docker volume ls` if you want to stop a
     running image.
 2.  See the running containers `docker ps`. This will show you how the
-    are ports are mapped.
+    are ports are mapped. You can stop one using `docker stop
+    <containerID>`.
 3.  If you are aggressive, you can try `docker system prune` for
     removing all stopped things.
