@@ -1,5 +1,7 @@
 FROM rocker/verse:latest
 
+RUN apt-get install xdg-utils --fix-missing
+
 RUN apt-get update \
   && apt-get install -y \
        libpoppler-cpp-dev \
