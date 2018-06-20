@@ -64,15 +64,15 @@ Local Machine:
 
 Digital Ocean Machine in Terminal:
 
-6.  Copy YouTube credentials from DO to Docker: `docker cp YOUTUBE.json
+2.  Copy YouTube credentials from DO to Docker: `docker cp YOUTUBE.json
     "rstudiocon":/home/${username}/YOUTUBE.json`
-7.  Permissions for user: `docker exec -it "rstudiocon" chown
+3.  Permissions for user: `docker exec -it "rstudiocon" chown
     ${username} /home/${username}/YOUTUBE.json`
-8.  Make a `.aws` folder on Docker: `docker exec -it "rstudiocon" mkdir
+4.  Make a `.aws` folder on Docker: `docker exec -it "rstudiocon" mkdir
     /home/${username}/.aws`
-9.  Copy AWS creds to Docker: `docker cp credentials
+5.  Copy AWS creds to Docker: `docker cp credentials
     "rstudiocon":/home/${username}/.aws/`
-10. Permissions: `docker exec -it "rstudiocon" chown ${username}
+6.  Permissions: `docker exec -it "rstudiocon" chown ${username}
     /home/${username}/.aws/credentials`
     <!-- NB: `rstudio` user may be open to the whole internet if you don't use `USER` and `PASSWORD`. You can run `docker exec rstudiocon deluser rstudio` -->
 
