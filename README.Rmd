@@ -33,6 +33,7 @@ See all the instructions with pictures here: https://www.digitalocean.com/commun
 Throughout I will call the IP address `YOURIP`.
 
 Local Machine: 
+
 1. Make sure you use Under Choose an image, select the One-click apps tab to create a Docker image.  Don't forget to add your SSH keys.
 2. Run `ssh root@YOURIP` in a Terminal to log into the machine.
 
@@ -57,6 +58,7 @@ username=test
 ```
 
 Local Machine:
+
 1. Copy over credentials: `rsync ~/.aws/credentials YOUTUBE.json root@YOURIP`
 
 Digital Ocean Machine in Terminal:
