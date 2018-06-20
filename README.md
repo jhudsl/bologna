@@ -21,28 +21,104 @@ See all the instructions with pictures here:
 
 Throughout I will call the IP address `YOURIP`.
 
-1.  Make sure you use Under Choose an image, select the One-click apps
-    tab to create a Docker image. Don’t forget to add your SSH keys.
-2.  Run `ssh root@YOURIP` in a Terminal to log into the machine.
+Local Machine: 1. Make sure you use Under Choose an image, select the
+One-click apps tab to create a Docker image. Don’t forget to add your
+SSH keys. 2. Run `ssh root@YOURIP` in a Terminal to log into the
+machine.
+
+Digital Ocean Machine in Terminal:
+
 3.  Run `docker pull seankross/bologna`
 4.  To start the RStudio server `docker run --name=rstudiocon -e
     USER=<username> -e PASSWORD=<password> -dp 8787:8787
     seankross/bologna`. You may also do `-e ROOT=TRUE`, but you still
-    should have USER/PASSWORD. Then log into `YOURIP:8787` using the
+    should have USER/PASSWORD.  
+5.  (optional) To access this running container in the Terminal, run
+    `docker exec -it "rstudiocon" bash` (can also find the `ID` from
+    `docker ps`). Then run `su <username>` to then log into that
+    account.
+
+Local Machine:
+
+1.  Then log into `YOURIP:8787` (on your local browser) using the
     username and password. For making multiple users, see
-    <https://github.com/rocker-org/rocker/wiki/Using-the-RStudio-image#multiple-users>.  
-5.  To access this running container in the Terminal, run `docker exec
-    -it "<containerID>" bash` (find the `ID` from `docker ps`). Then run
-    `su <username>` to then log into that account.
+    <https://github.com/rocker-org/rocker/wiki/Using-the-RStudio-image#multiple-users>.
 
 <!-- end list -->
 
   - To run the container in the Terminal without mapping to the RStudio
     instance, run `docker run -it -e ROOT=TRUE seankross/bologna bash`.
-    Now you are in the Docker image and you can run
-`R`.
+    Now you are in the Docker image and you can run `R`.
 
-<!-- NB: `rstudio` user may be open to the whole internet if you don't use `USER` and `PASSWORD`. You can run `docker exec rstudiocon deluser rstudio` -->
+### Copying over credentials
+
+Let’s say we called the username `test`:
+
+    username=test
+
+Local Machine: 1. Copy over credentials: `rsync ~/.aws/credentials
+YOUTUBE.json root@YOURIP`
+
+Digital Ocean Machine in Terminal:
+
+6.  Copy YouTube credentials from DO to Docker: `docker cp YOUTUBE.json
+    "rstudiocon":/home/${username}/YOUTUBE.json`
+7.  Permissions for user: `docker exec -it "rstudiocon" chown
+    ${username} /home/${username}/YOUTUBE.json`
+8.  Make a `.aws` folder on Docker: `docker exec -it "rstudiocon" mkdir
+    /home/${username}/.aws`
+9.  Copy AWS creds to Docker: `docker cp credentials
+    "rstudiocon":/home/${username}/.aws/`
+10. Permissions: `docker exec -it "rstudiocon" chown ${username}
+    /home/${username}/.aws/credentials`
+    <!-- NB: `rstudio` user may be open to the whole internet if you don't use `USER` and `PASSWORD`. You can run `docker exec rstudiocon deluser rstudio` -->
+
+### Testing
+
+You can test if the YouTube authorization is set up:
+
+``` r
+library(didactr)
+yt_auth(json = "~/YOUTUBE.json") # paste in output
+```
+
+``` r
+library(didactr)
+library(googledrive)
+library(dplyr)
+library(tuber)
+aws.signature::use_credentials(profile = "polly")
+#########################
+# Find a presentation
+#########################
+x = drive_find(n_max = 25, type = "presentation")
+```
+
+``` r
+res = gs_ari(x$id[1], voice = "Joanna", 
+       cleanup = FALSE,
+       ffmpeg_opts = '-vf "scale=trunc(iw/2)*2:trunc(ih/2)*2"')
+```
+
+You can copy this and test on your local machine.
+
+RStudio Server:
+
+``` r
+file.copy(res$output, "~/output.mp4")
+```
+
+Digital Ocean:
+
+``` bash
+docker cp "rstudiocon":/home/${username}/output.mp4 ~/output.mp4
+```
+
+Local Terminal:
+
+``` bash
+rsync root@YOURIP:~/output.mp4 ./
+```
 
 ### Setting up some defaults
 
@@ -75,6 +151,11 @@ to talk about OAuth Tokens.
     authentication code.
 
 3.  
+### Troubleshooting
+
+1.  If you have to restart the DO droplet, run `docker container restart
+    rstudiocon`
+
 ### A little docker commands
 
 See

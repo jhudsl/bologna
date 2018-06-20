@@ -2,6 +2,9 @@ FROM rocker/verse:latest
 
 RUN apt-get install xdg-utils --fix-missing
 
+RUN apt-get install -y build-essential checkinstall \
+	&& apt-get install -y imagemagick
+
 RUN apt-get update \
   && apt-get install -y \
        libpoppler-cpp-dev \
