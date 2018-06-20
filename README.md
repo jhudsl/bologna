@@ -23,17 +23,30 @@ Throughout I will call the IP address `YOURIP`.
 
 Local Machine:
 
+If you set this in your open terminal, the commands below should still
+work:
+
+``` bash
+YOURIP=123.345.423.212
+```
+
 1.  Make sure you use Under Choose an image, select the One-click apps
     tab to create a Docker image. Don’t forget to add your SSH keys.
-2.  Run `ssh root@YOURIP` in a Terminal to log into the machine.
+2.  Run `ssh root@${YOURIP}` in a Terminal to log into the machine.
 
 Digital Ocean Machine in Terminal:
 
+Here we are going to create a user other than `root`. You could use
+`root`, but with SSH keys on a DO instance, no password is set. Let’s
+make another user, for example `test`:
+
+    username=test
+
 3.  Run `docker pull seankross/bologna`
-4.  To start the RStudio server `docker run --name=rstudiocon -e
-    USER=<username> -e PASSWORD=<password> -dp 8787:8787
-    seankross/bologna`. You may also do `-e ROOT=TRUE`, but you still
-    should have USER/PASSWORD.  
+4.  **CHANGE PASSWORD HERE** To start the RStudio server `docker run
+    --name=rstudiocon -e USER=${username} -e PASSWORD=<pass word>
+    -dp 8787:8787 seankross/bologna`. You may also do `-e ROOT=TRUE`,
+    but you still should have USER/PASSWORD.  
 5.  (optional) To access this running container in the Terminal, run
     `docker exec -it "rstudiocon" bash` (can also find the `ID` from
     `docker ps`). Then run `su <username>` to then log into that
@@ -53,14 +66,10 @@ Local Machine:
 
 ### Copying over credentials
 
-Let’s say we called the username `test`:
-
-    username=test
-
 Local Machine:
 
 1.  Copy over credentials: `rsync ~/.aws/credentials YOUTUBE.json
-    root@YOURIP`
+    root@${YOURIP}`
 
 Digital Ocean Machine in Terminal:
 
@@ -120,14 +129,15 @@ docker cp "rstudiocon":/home/${username}/output.mp4 ~/output.mp4
 Local Terminal:
 
 ``` bash
-rsync root@YOURIP:~/output.mp4 ./
+rsync root@${YOURIP}:~/output.mp4 ./
+open output.mp4
 ```
 
 ### Setting up some defaults
 
 NB: `git` is already installed on the machine but not configured
 
-1.  Either `ssh ~/.gitconfig root@YOURIP:~/` or set up `git config
+1.  Either `ssh ~/.gitconfig root@${YOURIP}:~/` or set up `git config
     --global user.name "GITHUB_USERNAME"` and additional instructions
     here:
     <https://help.github.com/articles/setting-your-username-in-git/>
