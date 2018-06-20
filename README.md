@@ -156,14 +156,12 @@ to talk about OAuth Tokens.
 
 1.  Create a `googlesheets_token.rds` or the like with your
     authentication if necessary.
-
 2.  OAuth is a problem for now. Try `googlesheets::drive_auth()`. If you
     get `sh: 1: xdg-open: not found`, then run in `bash`: `sudo apt-get
     install xdg-utils --fix-missing` and rerun. The command may now give
     you a link to open in your (non-DO, non-Docker) browser. Paste the
     authentication code.
 
-3.  
 ### Troubleshooting
 
 1.  If you have to restart the DO droplet, run `docker container restart
