@@ -6,7 +6,7 @@
 Bologna is a [Docker](https://www.docker.com/) image for
 programmatically building educational content.
 
-## Getting Started
+## Getting Started (Locally)
 
 1.  Install [Docker](https://docs.docker.com/install/).
 2.  Start Docker.
