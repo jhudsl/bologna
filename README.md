@@ -1,12 +1,181 @@
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
 # bologna
 
-Bologna is a [Docker](https://www.docker.com/) image for programmatically
-building educational content.
+Bologna is a [Docker](https://www.docker.com/) image for
+programmatically building educational content.
 
-## Getting Started
+## Getting Started (Locally)
 
-1. Install [Docker](https://docs.docker.com/install/).
-2. Start Docker.
-3. Run `docker pull seankross/bologna`
-4. Run `docker run -dp 8787:8787 -e ROOT=TRUE seankross/bologna`
-5. Navigate to http://localhost:8787/ in your web browser.
+1.  Install [Docker](https://docs.docker.com/install/).
+2.  Start Docker.
+3.  Run `docker pull seankross/bologna`
+4.  Run `docker run -dp 8787:8787 -e ROOT=TRUE seankross/bologna`
+5.  Navigate to <http://localhost:8787/> in your web browser.
+
+## Getting Started on Digital Ocean
+
+See all the instructions with pictures here:
+<https://www.digitalocean.com/community/tutorials/how-to-use-the-digitalocean-docker-application>
+
+Throughout I will call the IP address `YOURIP`.
+
+Local Machine:
+
+If you set this in your open terminal, the commands below should still
+work:
+
+``` bash
+YOURIP=123.345.423.212
+```
+
+1.  Make sure you use Under Choose an image, select the One-click apps
+    tab to create a Docker image. Don’t forget to add your SSH keys.
+2.  Run `ssh root@${YOURIP}` in a Terminal to log into the machine.
+
+Digital Ocean Machine in Terminal:
+
+Here we are going to create a user other than `root`. You could use
+`root`, but with SSH keys on a DO instance, no password is set. Let’s
+make another user, for example `test`:
+
+    username=test
+
+3.  Run `docker pull seankross/bologna`
+4.  **CHANGE PASSWORD HERE** To start the RStudio server `docker run
+    --name=rstudiocon -e USER=${username} -e PASSWORD=<pass word>
+    -dp 8787:8787 seankross/bologna`. You may also do `-e ROOT=TRUE`,
+    but you still should have USER/PASSWORD.  
+5.  (optional) To access this running container in the Terminal, run
+    `docker exec -it "rstudiocon" bash` (can also find the `ID` from
+    `docker ps`). Then run `su <username>` to then log into that
+    account.
+
+Local Machine:
+
+1.  Then log into `YOURIP:8787` (on your local browser) using the
+    username and password. For making multiple users, see
+    <https://github.com/rocker-org/rocker/wiki/Using-the-RStudio-image#multiple-users>.
+
+<!-- end list -->
+
+  - To run the container in the Terminal without mapping to the RStudio
+    instance, run `docker run -it -e ROOT=TRUE seankross/bologna bash`.
+    Now you are in the Docker image and you can run `R`.
+
+### Copying over credentials
+
+Local Machine:
+
+1.  Copy over credentials: `rsync ~/.aws/credentials YOUTUBE.json
+    root@${YOURIP}`
+
+Digital Ocean Machine in Terminal:
+
+2.  Copy YouTube credentials from DO to Docker: `docker cp YOUTUBE.json
+    "rstudiocon":/home/${username}/YOUTUBE.json`
+3.  Permissions for user: `docker exec -it "rstudiocon" chown
+    ${username} /home/${username}/YOUTUBE.json`
+4.  Make a `.aws` folder on Docker: `docker exec -it "rstudiocon" mkdir
+    /home/${username}/.aws`
+5.  Copy AWS creds to Docker: `docker cp credentials
+    "rstudiocon":/home/${username}/.aws/`
+6.  Permissions: `docker exec -it "rstudiocon" chown ${username}
+    /home/${username}/.aws/credentials`
+    <!-- NB: `rstudio` user may be open to the whole internet if you don't use `USER` and `PASSWORD`. You can run `docker exec rstudiocon deluser rstudio` -->
+
+### Testing
+
+You can test if the YouTube authorization is set up:
+
+``` r
+library(didactr)
+yt_auth(json = "~/YOUTUBE.json") # paste in output
+```
+
+``` r
+library(didactr)
+library(googledrive)
+library(dplyr)
+library(tuber)
+aws.signature::use_credentials(profile = "polly")
+#########################
+# Find a presentation
+#########################
+x = drive_find(n_max = 25, type = "presentation")
+```
+
+``` r
+res = gs_ari(x$id[1], voice = "Joanna", 
+       cleanup = FALSE,
+       ffmpeg_opts = '-vf "scale=trunc(iw/2)*2:trunc(ih/2)*2"')
+```
+
+You can copy this and test on your local machine.
+
+RStudio Server:
+
+``` r
+file.copy(res$output, "~/output.mp4")
+```
+
+Digital Ocean:
+
+``` bash
+docker cp "rstudiocon":/home/${username}/output.mp4 ~/output.mp4
+```
+
+Local Terminal:
+
+``` bash
+rsync root@${YOURIP}:~/output.mp4 ./
+open output.mp4
+```
+
+### Setting up some defaults
+
+NB: `git` is already installed on the machine but not configured
+
+1.  Either `ssh ~/.gitconfig root@${YOURIP}:~/` or set up `git config
+    --global user.name "GITHUB_USERNAME"` and additional instructions
+    here:
+    <https://help.github.com/articles/setting-your-username-in-git/>
+2.  Create a new GitHub [Personal Auth
+    Token](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/)
+    that has permissions to push/pull on private repos for `CDS` so you
+    don’t need passwords for `git pull`. NB: If you have 2-factor
+    authentication, [you use your PAT, not your password when
+    prompted.](https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/#using-a-token-on-the-command-line)
+
+### Google Authentication Tokens
+
+Read
+<https://cran.r-project.org/web/packages/googlesheets/vignettes/managing-auth-tokens.html>
+to talk about OAuth Tokens.
+
+1.  Create a `googlesheets_token.rds` or the like with your
+    authentication if necessary.
+2.  OAuth is a problem for now. Try `googlesheets::drive_auth()`. If you
+    get `sh: 1: xdg-open: not found`, then run in `bash`: `sudo apt-get
+    install xdg-utils --fix-missing` and rerun. The command may now give
+    you a link to open in your (non-DO, non-Docker) browser. Paste the
+    authentication code.
+
+### Troubleshooting
+
+1.  If you have to restart the DO droplet, run `docker container restart
+    rstudiocon`
+
+### A little docker commands
+
+See
+<https://www.digitalocean.com/community/tutorials/how-to-remove-docker-images-containers-and-volumes>
+
+1.  See the volumes made `docker volume ls` if you want to stop a
+    running image.
+2.  See the running containers `docker ps`. This will show you how the
+    are ports are mapped. You can stop one using `docker stop
+    <containerID>`.
+3.  If you are aggressive, you can try `docker system prune` for
+    removing all stopped things.
