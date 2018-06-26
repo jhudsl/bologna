@@ -9,7 +9,7 @@ RUN apt-get update \
        tesseract-ocr-eng \
        libwebp-dev \
        libgdal-dev \
-       imagemagick \
+       imagemagick  \
   && install2.r --error --deps TRUE \
        magick googledrive tuber pdftools \
   && installGithub.r --deps TRUE \
