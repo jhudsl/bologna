@@ -1,6 +1,7 @@
 FROM rocker/verse:latest
 
-RUN apt-get install -y build-essential checkinstall \
+RUN apt-get update \
+	&& apt-get install -y build-essential checkinstall \
 	&& apt-get install -y imagemagick
 
 RUN apt-get update \
