@@ -1,0 +1,7 @@
+[default]
+aws_access_key_id = AKIAJRLDCBSRG2QPSRKA
+aws_secret_access_key = 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
+
+[polly]
+aws_access_key_id = AKIAJBLJYQJ33J4JLKRQ
+aws_secret_access_key = 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
