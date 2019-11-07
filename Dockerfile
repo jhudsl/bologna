@@ -10,6 +10,9 @@ RUN apt-get update \
        libwebp-dev \
        libgdal-dev \
        imagemagick  \
+       cargo \
+       libsodium-dev \
+       libavfilter-dev \
   && install2.r --error --deps TRUE \
        magick googledrive tuber pdftools \
   && installGithub.r --deps TRUE \
