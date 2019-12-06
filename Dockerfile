@@ -18,7 +18,7 @@ RUN apt-get update \
   && installGithub.r --deps TRUE \
        muschellij2/ari muschellij2/didactr
 
-RUN git clone https://github.com/muschellij2/ari ari && \
-	cd ari && \
-	R CMD check "devtools::run_examples()" \
-	cd .. && rm -f ari
+##RUN git clone https://github.com/muschellij2/ari ari && \
+##	cd ari && \
+##	R CMD check "devtools::run_examples()" \
+##	cd .. && rm -f ari
